@@ -4,6 +4,8 @@ import { Survey } from "survey-react-ui";
 import "survey-core/survey-core.min.css";
 
 const surveyJson = {
+  checkErrorsMode: "onValueChanged",
+  textUpdateMode: "onTyping",
   title: "HR Training Application Form",
   pages: [
     {
@@ -14,7 +16,7 @@ const surveyJson = {
           name: "Employee Details",
           state: "expanded",
           title: "1. Employee Details",
-          elements:[
+          elements: [
             {
               type: "text",
               name: "Employee Name",
@@ -30,13 +32,201 @@ const surveyJson = {
               name: "Department",
               isRequired: "true",
               choices: ["HR", "Finance", "IT", "Logistics", "Accounting"]
+            },
+            {
+              type: "text",
+              name: "Reporting Manager",
+              isRequired: "true"
             }
           ]
         },
         {
-          type: "comment",
-          name: "message",
-          title: "Your Message"
+          type: "panel",
+          name: "Training Details",
+          state: "collapsed",
+          title: "2. Training Details",
+          elements: [
+            {
+              type: "text",
+              name: "Course Name",
+              isRequired: "true"
+            },
+            {
+              type: "comment",
+              name: "Training Objective",
+              title: "Training Objective",
+              isRequired: "true"
+            },
+            {
+              type: "text",
+              name: "Training Provider",
+              isRequired: "true"
+            },
+            {
+              type: "comment",
+              name: "Venue",
+              title: "Venue",
+              isRequired: "true"
+            },
+            {
+              type: "text",
+              inputType: "datetime-local",
+              name: "startDate",
+              min: "today",
+              title: "Start Date/Time",
+              isRequired: "true",
+              validators: [
+                {
+                  type: "expression",
+                  expression: "{startDate} > today()",
+                  text: "Date Invalid",
+                  notificationType: "error"
+                }
+              ]
+            },
+            {
+              type: "text",
+              inputType: "datetime-local",
+              name: "endDate",
+              min: "today",
+              title: "End Date/Time",
+              isRequired: "true",
+              validators: [
+                {
+                  type: "expression",
+                  expression: "{endDate} > today()",
+                  text: "Date Invalid",
+                  notificationType: "error"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          type: "panel",
+          name: "cost",
+          state: "expanded",
+          title: "3. Cost",
+          elements: [
+            {
+              type: "multipletext",
+              name: "cost_details",
+              titleLocation: "hidden",
+              colCount: 1,
+              items: [
+                {
+                  name: "training_fee",
+                  title: "Training Fee (RM)",
+                  inputType: "number",
+                  step: 0.01,
+                  validators: [
+                    {
+                      type: "numeric",
+                      text: "Enter a valid amount (e.g. 10.50)",
+                      notificationType: "error"
+                    }
+                  ]
+                },
+                {
+                  name: "mileage",
+                  title: "Travelling Cost: Mileage (RM)",
+                  inputType: "number",
+                  step: 0.01,
+                  validators: [
+                    {
+                      type: "numeric",
+                      text: "Enter a valid amount (e.g. 10.50)",
+                      notificationType: "error"
+                    }
+                  ]
+
+                },
+                {
+                  name: "meal_allowance",
+                  title: "Travelling Cost: Meals Allowance (RM)",
+                  inputType: "number",
+                  step: 0.01,
+                  validators: [
+                    {
+                      type: "numeric",
+                      text: "Enter a valid amount (e.g. 10.50)",
+                      notificationType: "error"
+                    }
+                  ]
+
+                },
+                {
+                  name: "accommodation",
+                  title: "Accommodation (RM)",
+                  inputType: "number",
+                  step: 0.01,
+                  validators: [
+                    {
+                      type: "numeric",
+                      text: "Enter a valid amount (e.g. 10.50)",
+                      notificationType: "error"
+                    }
+                  ]
+                },
+                {
+                  name: "other_cost",
+                  title: "Other Cost (RM)",
+                  inputType: "number",
+                  step: 0.01,
+                  validators: [
+                    {
+                      type: "numeric",
+                      text: "Enter a valid amount (e.g. 10.50)",
+                      notificationType: "error"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              type: "expression",
+              name: "total_cost",
+              title: "Total Cost (RM)",
+              // Note: We sum all 5 specific items now
+              expression: "({cost_details.training_fee} || 0) + ({cost_details.mileage} || 0) + ({cost_details.meal_allowance} || 0) + ({cost_details.accommodation} || 0) + ({cost_details.other_cost} || 0)",
+              displayStyle: "currency",
+              currency: "MYR"
+            }
+          ]
+        },
+        {
+          type: "radiogroup",
+          name: "hrdc_application",
+          title: "HRDC Application?",
+          "choices": [
+            { "value": "true", "text": "Yes" },
+            { "value": "false", "text": "No" }
+          ],
+          colCount: 0, // This puts them side-by-side
+          isRequired: true
+        },
+        {
+          "type": "panel",
+          "name": "approval_section",
+          "title": "Approved By",
+          "elements": [
+            {
+              "type": "signaturepad",
+              "name": "applicant_signature",
+              "title": "Applicant Signature",
+              "isRequired": true,
+              "signatureWidth": 400,
+              "signatureHeight": 200,
+              "penColor": "#000000" // Standard black ink
+            },
+            {
+              "type": "text",
+              "name": "applicant_name",
+              "title": "Full Name",
+              "isRequired": true,
+              "startWithNewLine": false // Puts the name next to the signature if space allows
+            }
+          ]
         }
       ]
     }
